@@ -13,44 +13,55 @@ Client:
 ```
 import socket
 
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client_socket.connect(('localhost', 12345))
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(('localhost', 8000))
 
-message = "Hello Server, this is Client!"
-client_socket.sendall(message.encode())
+while True:
+    msg = input("Client > ")
 
-data = client_socket.recv(1024)
-print("Received from server:", data.decode())
+    if msg.strip() == "":
+        break
 
-client_socket.close()
+    client.send(msg.encode())
+
+    data = client.recv(1024).decode()
+    print("Server >", data)
+
+client.close()
+
 ```
 
 server:
 ```
 import socket
 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind(('localhost', 12345))
-server_socket.listen(1)
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind(('localhost', 8000))
+server.listen(1)
 
-print("Server is listening on port 12345...")
+print("Server is ready...\n")
 
-conn, addr = server_socket.accept()
-print("Connected by", addr)
+conn, addr = server.accept()
+print(f"Client connected from {addr}\n")
 
 while True:
-    data = conn.recv(1024)
+    data = conn.recv(1024).decode()
     if not data:
         break
-    print("Received from client:", data.decode())
-    conn.sendall(data)
+
+    print(f"Client > {data}")
+    print(f"Server > {data}")
+
+    conn.send(data.encode())
 
 conn.close()
+server.close()
+
 ```
 
 
 ## OUPUT
-<img width="1082" height="329" alt="Screenshot 2025-10-03 101948" src="https://github.com/user-attachments/assets/8838b2d5-c74a-4baf-9673-1fd4f5328c97" />
+<img width="1917" height="1188" alt="image" src="https://github.com/user-attachments/assets/61a0e07e-1ed1-4a40-8866-20d4de74b3be" />
 
 ## RESULT
 Thus, the python program for creating Echo Client and Echo Server using TCP Sockets Links 
